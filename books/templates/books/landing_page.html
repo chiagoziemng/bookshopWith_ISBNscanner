@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bookstore Landing Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Bookstore Landing Page</h1>
+        <div class="row">
+            {% for book in books %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ book.image.url }}" class="card-img-top" alt="Book Image">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ book.title }}</h5>
+                            <p class="card-text">Author: {{ book.author }}</p>
+                            <a href="{% url 'book_detail' book.id %}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <hr>
+        
+        <h2>Other Pages</h2>
+        <ul>
+            <li><a href="{% url 'scan_book' %}">Scan book</a></li>
+            <li><a href="{% url 'isbn_verify' %}">Isbn verify</a></li>
+            <!-- Add more links as needed -->
+        </ul>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

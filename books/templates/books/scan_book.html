@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scan Book ISBN or Barcode</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 1em;
+        }
+
+        #video {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin-bottom: 1em;
+        }
+
+        button {
+            padding: 0.5em 1em;
+            font-size: 1em;
+        }
+
+        #result {
+            margin-top: 1em;
+        }
+    </style>
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
+</head>
+<body>
+    <h1>Scan Book ISBN or Barcode</h1>
+    <video id="video" width="100%" height="auto"></video>
+    <button onclick="startScanning()">Start Scanning</button>
+    <p id="result"></p>
+
+    <script>
+        const video = document.getElementById('video');
+        const resultElement = document.getElementById('result');
+        let codeReader;
+
+        function startScanning() {
+            codeReader = new ZXing.BrowserMultiFormatReader();
+            codeReader.listVideoInputDevices()
+                .then(videoInputDevices => {
+                    let selectedDeviceId;
+                    if (videoInputDevices.length > 0) {
+                        selectedDeviceId = videoInputDevices[0].deviceId;
+                    }
+
+                    codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
+                        if (result) {
+                            const isbn = result.text;
+                            resultElement.textContent = `ISBN/Barcode: ${isbn}`;
+                            document.getElementById('isbn').value = isbn;
+                            codeReader.reset();
+                            video.srcObject.getTracks().forEach(track => {
+                                track.stop();
+                            });
+                        }
+                        if (err && !(err instanceof ZXing.NotFoundException)) {
+                            console.error(err);
+                            resultElement.textContent = 'Error scanning the barcode. Please try again.';
+                        }
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    resultElement.textContent = 'Error accessing the webcam.';
+                });
+        }
+    </script>
+</body>
+</html>
